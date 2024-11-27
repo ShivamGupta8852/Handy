@@ -16,7 +16,6 @@ const HomePage = () => {
   });
 
   useEffect(() => {
-    // Fetch counts from API
     const fetchCounts = async () => {
       try {
         const response = await fetch('https://api.example.com/counts'); // Replace with your API endpoint

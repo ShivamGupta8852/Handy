@@ -1,35 +1,28 @@
 import mongoose from "mongoose";
 
-
-// This model represents jobs posted by work providers
-
-const jobSchema = new mongoose.Schema(
-  {
-    title: { type: String, required: true },
-    description: { type: String, required: true },
-    provider: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
-      required: true,
-    },
-    location: {
-      city: { type: String, required: true },
-      state: { type: String, required: true },
-      coordinates: {
-        lat: { type: Number, required: true },
-        lng: { type: Number, required: true },
-      },
-    },
-    duration: { type: String, required: true }, // e.g., "2 days", "1 week"
-    compensation: { type: Number, required: true },
-    requiredSkill: { type: String, required: true }, // Skill needed, e.g., "Plumber"
-    status: { type: String, default: "Open" }, // Open, In Progress, Completed, Canceled
-    worker: { type: mongoose.Schema.Types.ObjectId, ref: "Worker" }, // Assigned worker
-    ratingGiven: { type: Boolean, default: false }, // Indicates if rating has been provided
+// model for job postings by work providers
+const JobSchema = new mongoose.Schema({
+  title: { type: String, required: true },
+  description: { type: String, required: true },
+  location: {
+    city: { type: String },
+    state: { type: String },
+    coordinates: { type: [Number], index: '2dsphere' }, // [longitude, latitude]
   },
-  { timestamps: true }
-);
+  compensation: { type: String, required: true },
+  duration: { type: String }, // E.g., '2 hours', '3 days'
+  providerId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+  requiredExpertise: { type: [String], required: true }, // E.g., ['plumber', 'electrician']
+  createdAt: { type: Date, default: Date.now },
+  applicants: [
+    {
+      workerId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+      status: { type: String, enum: ['applied', 'rejected', 'accepted'], default: 'applied' },
+    },
+  ],
+  status: { type: String, enum: ['open', 'in progress', 'completed', 'cancelled'], default: 'open' },
+});
 
-const Job = mongoose.model("Job", jobSchema);
+const Job = mongoose.model('Job', JobSchema);
 
 export default Job;
