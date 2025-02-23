@@ -1,6 +1,6 @@
 import express from 'express';
 import upload from '../utils/multer.js';
-import { login, signup, userInfo } from '../Controllers/AuthController.js';
+import { login, signup, userInfo } from '../Controllers/authController.js';
 import verifyToken from '../Middleware/authMiddleware.js';
 
 

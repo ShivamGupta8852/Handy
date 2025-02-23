@@ -14,7 +14,7 @@ const Footer = () => {
             <p className='mb-4'><Link to="/" className="text-2xl font-bold text-blue-600 dark:text-yellow-400">
               Handy
             </Link></p>
-            <p className="text-gray-300 mb-4">
+            <p className="text-gray-400 mb-4">
               Handy connects skilled blue-collar workers with those who need their services, creating a reliable platform for both job seekers and job posters.
             </p>
             <p className="text-gray-400">

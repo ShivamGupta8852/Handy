@@ -69,24 +69,13 @@ const Signup = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // const data = new FormData();
-    // Object.keys(formData).forEach((key) => {
-    //   data.append(key, formData[key]);
-    // });
-
-
     try {
       const res = await axios.post("http://localhost:8002/api/auth/signup", formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
 
-
       if (res.data.success) {
-        toast.success(res.data.message, {
-          theme: "dark",
-          autoClose: 1000,
-          position: "top-center",
-        });
+        toast.success(res.data.message, {theme: "dark",autoClose: 1000,position: "top-center",});
         navigate("/login");
         setFormData({
           name: "",
@@ -118,7 +107,7 @@ const Signup = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100 py-20">
+    <div className="min-h-screen flex items-center justify-center bg-gray-100 my-2">
       <div className="w-full max-w-4xl bg-white shadow-md rounded-lg p-8">
         <h1 className="text-2xl font-semibold text-center mb-6">
           Signup as {formData.userType === "worker" ? "Worker" : "Provider"}
@@ -339,3 +328,8 @@ const Signup = () => {
 };
 
 export default Signup;
+
+
+
+
+

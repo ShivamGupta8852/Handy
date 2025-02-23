@@ -5,6 +5,29 @@
 
 /* Add this to your CSS file or in a style tag */
 
+/* global.css */
+/* :root {
+  --primary-bg: #ffffff;
+  --secondary-bg: #f9fafb;
+  --primary-text: #1f2937;
+  --secondary-text: #6b7280;
+  --button-primary: #2563eb;
+  --button-secondary: #d1d5db;
+  --hover-primary: #1d4ed8;
+} */
+
+.light{
+  --primary-text : #FFFAEC;
+  --secondary-text: #EFF3EA;
+  --primary-bg: #0c0b0b;
+  --secondary-bg: #f9fafb;
+}
+
+.dark{
+  --primary-text : #F5ECD5;
+  --secondary-text : #B6CBBD;
+}
+
 #cards-container {
   display: flex;
   white-space: nowrap;

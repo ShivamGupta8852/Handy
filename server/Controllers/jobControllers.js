@@ -1,6 +1,7 @@
 import Job from "../Models/Job.js";
 import User from "../Models/User.js";
 import Booking from "../Models/Booking.js";
+import mongoose from "mongoose";
 
 // Controller to create a job
 const createJob = async (req, res) => {
@@ -38,14 +39,11 @@ const createJob = async (req, res) => {
 
     const savedJob = await newJob.save();
 
-    return res
-      .status(201)
-      .json({ message: "Job created Successfully!!", success: true });
+    return res.status(201).json({ message: "Job created Successfully!!", success: true });
   } catch (err) {
     console.log("Server side job creation error", err.message);
-    return res
-      .status(500)
-      .json({ success: false, message: "job creation error from server side" });
+    return res.status(500)
+.json({ success: false, message: "job creation error from server side" });
   }
 };
 
@@ -62,12 +60,25 @@ const getJobsForWorkers = async (req, res) => {
       coordinates,
     } = req.query;
 
-    // Build query dynamically based on filters
-    const query = { status: "open" }; //Only show jobs with status 'open'
+    const workerId = req.user.userId;
 
-    if (expertise) query.requiredExpertise = { $in: [expertise] };
-    if (city) query["location.city"] = city;
-    if (state) query["location.state"] = state;
+    // Build query dynamically based on filters
+    const query = { status: "open"}; // Only show jobs with status 'open'
+
+    //  Exclude jobs where the worker has already applied or is the provider
+     query.$nor = [
+      { 'applicants.workerId': workerId }, 
+      { providerId: workerId },
+    ];
+
+    if (expertise) {
+      const expertiseRegex = expertise.split(",").map(item => new RegExp(item, "i"));
+      query.requiredExpertise = { $in: expertiseRegex }; 
+    }
+    if (city) query["location.city"] = { $regex: new RegExp(city, "i") }; 
+    if (state) query["location.state"] = { $regex: new RegExp(state, "i") }; 
+
+    // Compensation range filter
     if (compensationRange) {
       const [min, max] = compensationRange.split("-").map(Number);
       query.compensation = { $gte: min, $lte: max };
@@ -77,12 +88,15 @@ const getJobsForWorkers = async (req, res) => {
     if (maxDistance && coordinates) {
       const [longitude, latitude] = coordinates.split(",").map(Number);
       query["location.coordinates"] = {
-        $near: {
-          $geometry: { type: "Point", coordinates: [longitude, latitude] },
-          $maxDistance: parseInt(maxDistance, 10),
+        $geoWithin: {
+          $centerSphere: [
+            [longitude, latitude], 
+            parseInt(maxDistance, 10) / 3963.2  // Convert miles to radians
+          ],
         },
       };
     }
+
 
     // Pagination support
     const page = parseInt(req.query.page, 10) || 1;
@@ -96,14 +110,17 @@ const getJobsForWorkers = async (req, res) => {
       sortOptions["location.coordinates"] = 1;
     else if (sortBy === "rating") sortOptions.rating = -1;
 
+    // Fetch jobs
     const jobs = await Job.find(query)
       .populate("providerId", "name location")
       .sort(sortOptions)
       .skip(skip)
       .limit(limit);
 
+    // Count total jobs
     const totalJobs = await Job.countDocuments(query);
 
+    // Respond with data
     res.status(200).json({
       success: true,
       jobs,
@@ -115,9 +132,11 @@ const getJobsForWorkers = async (req, res) => {
     console.error(err);
     return res
       .status(500)
-      .json({ message: "Server side error in getting jobs", success: true });
+      .json({ message: "Server side error in getting jobs", success: false });
   }
 };
+
+
 
 // Controller to fetch a single job by ID
 const getJobById = async (req, res) => {
@@ -143,14 +162,8 @@ const applyForJob = async (req, res) => {
       return res.status(404).json({ message: "Job not found", success: true });
 
     // Check if the worker has already applied
-    if (
-      job.applicants.some(
-        (applicant) => applicant.workerId.toString() === workerId
-      )
-    ) {
-      return res
-        .status(400)
-        .json({ message: "Already applied for this job", success: true });
+    if (job.applicants.some((applicant) => applicant.workerId.toString() === workerId)) {
+      return res.status(409).json({ message: "Already applied for this job", success: true });
     }
 
     // Add the worker to the applicants

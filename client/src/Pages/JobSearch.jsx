@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import JobFilters from './JobFilters.jsx';
+import JobFilters from '../component/worker/JobFilters.jsx';
 import { toast } from 'react-toastify';
 
 
@@ -19,6 +19,7 @@ const JobSearch = () => {
         withCredentials : true,
       });
 
+      
       if(res.data.success){
         setJobs(res.data.jobs);
         setTotalPages(res.data.totalPages);
@@ -52,10 +53,7 @@ const JobSearch = () => {
         });
 
         fetchJobs(); // Refresh job list
-        
       }
-      
-
     } catch (error) {
       console.error(error);
       if (error.response && error.response.data && error.response.data.success === false) {
@@ -73,7 +71,7 @@ const JobSearch = () => {
   };
 
   return (
-    <div className="max-w-4xl mx-auto py-20">
+    <div className="max-w-4xl mx-auto mt-2 mb-5">
     <JobFilters onApplyFilters={applyFilters} />
     <div className="bg-white p-4 rounded shadow-md">
       <div className="flex justify-between items-center mb-4">

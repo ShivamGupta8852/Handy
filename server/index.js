@@ -7,7 +7,8 @@ import cookieParser from "cookie-parser";
 import authRoutes from './routes/authRoute.js';
 import locationRoutes from "./routes/locationRoute.js";
 import jobRoutes from "./routes/jobRoutes.js";
-import workerRoutes from './routes/workerRoutes.js'
+import workerRoutes from './routes/workerRoutes.js';
+import providerRoute from './routes/providerRouter.js';
 
 
 const app = express();
@@ -25,6 +26,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/location", locationRoutes);
 app.use("/api/jobs", jobRoutes);
 app.use("/api/worker", workerRoutes);
+app.use("/api/provider", providerRoute);
 
 
 const PORT = process.env.PORT || 8003;

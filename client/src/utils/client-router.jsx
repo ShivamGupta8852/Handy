@@ -8,7 +8,11 @@ import Login from '../Pages/Login.jsx';
 import CreateJobForm from '../Pages/CreateJobForm.jsx';
 import JobSearch from '../Pages/JobSearch.jsx';
 import WorkerDashboard from '../Pages/WorkerDashboard.jsx';
-import ProviderDashboard from '../Pages/ProviderDashboard.jsx';
+import ProviderDashboard from '../Pages/provider/ProviderDashboard.jsx';
+import Chat from '../component/worker/Chat.jsx';
+import Applications from '../Pages/Applications.jsx';
+import WorkerProfile from '../Pages/WorkerProfile.jsx';
+import ManageJobApplications from '../component/provider/ManageJobApplications.jsx';
 
 const router = createBrowserRouter([
     {
@@ -50,6 +54,22 @@ const router = createBrowserRouter([
             {
                 path:'/provider-dashboard',
                 element:<ProviderDashboard/>
+            },
+            {
+                path:'/chat/:jobId/:providerId',
+                element:<Chat/>
+            },
+            {
+                path:'/applications',
+                element:<Applications/>
+            },
+            {
+                path:'/profile',
+                element:<WorkerProfile/>
+            },
+            {
+                path:'/provider/jobs/:jobId',
+                element:<ManageJobApplications/>
             },
         ]
     }

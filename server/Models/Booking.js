@@ -10,10 +10,13 @@ const BookingSchema = new mongoose.Schema({
   status: { type: String, enum: ['ongoing', 'completed', 'cancelled'], default: 'ongoing' },
   paymentStatus: { type: String, enum: ['pending', 'paid'], default: 'pending' },
   rating: {
-    workerRating: { type: Number },
-    providerRating: { type: Number },
+    workerRating: { type: Number , default: 0 },
+    providerRating: { type: Number , default: 0 },
   },
-});
+  cancellationReason: { type: String }, // Reason for booking cancellation
+  paymentMethod: { type: String, enum: ['online', 'cash'], required: true },
+  paymentAmount: { type: Number, required: true },
+},{timestamps:true});
 
 const Booking = mongoose.model('Booking', BookingSchema);
 
